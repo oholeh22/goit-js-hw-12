@@ -4,15 +4,14 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchImages } from './js/pixabay-api'; 
 import { renderImages, clearGallery } from './js/render-functions'; 
-const axios = require('axios/dist/node/axios.cjs'); // node
 
 let lightbox = new SimpleLightbox('.gallery-list a', {});
 
-document.getElementById('search-form').addEventListener('submit', function(event) {
+document.getElementById('search-form').addEventListener('submit', async function(event) {
     event.preventDefault();
-  
+
     const searchInput = document.getElementById('search-input').value.trim();
-  
+
     if (!searchInput) {
         iziToast.error({ message: 'Please enter a search word.' });
         return;
@@ -20,9 +19,10 @@ document.getElementById('search-form').addEventListener('submit', function(event
 
     const galleryList = document.getElementById('gallery');
     clearGallery(galleryList);
-  
-    fetchImages(searchInput)
-      .then(images => {
+
+    try {
+        const images = await fetchImages(searchInput);
+
         if (images.length === 0) {
             iziToast.warning({
                 title: 'No results',
@@ -32,10 +32,10 @@ document.getElementById('search-form').addEventListener('submit', function(event
             });
             return;
         }
+
         renderImages(images, galleryList);
-        lightbox.refresh(); 
-      })
-      .catch(error => {
+        lightbox.refresh();
+    } catch (error) {
         console.error('Error fetching images:', error);
         iziToast.error({
             title: 'Error',
@@ -43,5 +43,5 @@ document.getElementById('search-form').addEventListener('submit', function(event
             position: 'topRight',
             timeout: 5000,
         });
-      });
+    }
 });
