@@ -30,8 +30,16 @@ export function renderImages(images, galleryElement) {
     galleryElement.insertAdjacentHTML('beforeend', markup); 
 }
 
-
 export function clearGallery(galleryElement) {
     galleryElement.innerHTML = ''; 
+}
+
+export function showEndOfResultsMessage() {
+    iziToast.info({
+        title: 'End of results',
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+        timeout: 5000,
+    });
 }
 

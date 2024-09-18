@@ -6,10 +6,16 @@ export async function fetchImages(query, page = 1, perPage = 15) {
 
     try {
         const response = await axios.get(url);
+        const data = response.data;
+
         if (response.status !== 200) {
-            throw new Error('Network response was not ok');
+            throw new Error('Failed to fetch images');
         }
-        return response.data.hits;
+
+        return {
+            images: data.hits,
+            totalHits: data.totalHits
+        };
     } catch (error) {
         console.error('Error fetching images:', error);
         throw error;

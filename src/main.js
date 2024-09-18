@@ -2,9 +2,8 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { fetchImages } from './js/pixabay-api.js'
-import { renderImages, clearGallery } from './js/render-functions.js';
-
+import { fetchImages } from './js/pixabay-api.js';
+import { renderImages, clearGallery, showEndOfResultsMessage } from './js/render-functions.js';
 
 let lightbox = new SimpleLightbox('.gallery-list a', {});
 let currentQuery = ''; 
@@ -21,7 +20,7 @@ async function loadImages() {
     loadMoreButton.style.display = 'none'; 
 
     try {
-        const images = await fetchImages(currentQuery, page, perPage);
+        const { images, totalHits } = await fetchImages(currentQuery, page, perPage); 
 
         if (images.length === 0 && page === 1) {
             iziToast.warning({
@@ -37,13 +36,27 @@ async function loadImages() {
         renderImages(images, galleryList);
         lightbox.refresh();
 
-        if (images.length === perPage) {
-            loadMoreButton.style.display = 'block';
+        const galleryItem = document.querySelector('.gallery-item');
+        const cardHeight = galleryItem ? galleryItem.getBoundingClientRect().height : 0;
+        
+        const totalLoaded = (page - 1) * perPage + images.length; 
+
+        if (totalLoaded >= totalHits) {
+            loadMoreButton.style.display = 'none';
+            showEndOfResultsMessage(); 
         } else {
-            loadMoreButton.style.display = 'none'; // 
+            loadMoreButton.style.display = 'block'; 
         }
 
         loader.style.display = 'none'; 
+
+        if (cardHeight > 0) {
+            window.scrollBy({
+                top: 2 * cardHeight, 
+                behavior: 'smooth' 
+            });
+        }
+
         page += 1; 
     } catch (error) {
         console.error('Error fetching images:', error);
@@ -56,30 +69,3 @@ async function loadImages() {
         loader.style.display = 'none';
     }
 }
-
-
-searchForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const searchInput = document.getElementById('search-input').value.trim();
-
-    if (!searchInput) {
-        iziToast.error({ message: 'Please enter a search word.' });
-        return;
-    }
-
-   
-    if (searchInput !== currentQuery) {
-        currentQuery = searchInput;
-        page = 1; 
-        clearGallery(galleryList); 
-    }
-
-    loadMoreButton.style.display = 'none'; 
-    loadImages(); 
-});
-
-
-loadMoreButton.addEventListener('click', function() {
-    loadImages(); 
-});
