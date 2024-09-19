@@ -13,7 +13,7 @@ const perPage = 15;
 const searchForm = document.getElementById('search-form');
 const galleryList = document.getElementById('gallery');
 const loadMoreButton = document.getElementById('load-more');
-const loader = document.querySelector('.loader'); 
+const loader = document.querySelector('.loader');
 
 searchForm.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -26,10 +26,16 @@ searchForm.addEventListener('submit', function(event) {
     }
 
     currentQuery = searchInput;
-    page = 1;
-    clearGallery(galleryList);
+    page = 1; 
+    clearGallery(galleryList); 
     loadImages(); 
 });
+
+
+loadMoreButton.addEventListener('click', function() {
+    loadImages(); 
+});
+
 
 window.addEventListener('DOMContentLoaded', () => {
     loader.style.display = 'none'; 
@@ -53,14 +59,15 @@ async function loadImages() {
             return;
         }
 
-        renderImages(images, galleryList);
-        lightbox.refresh();
+        renderImages(images, galleryList); 
+        lightbox.refresh(); 
 
         const galleryItem = document.querySelector('.gallery-item');
         const cardHeight = galleryItem ? galleryItem.getBoundingClientRect().height : 0;
         
         const totalLoaded = (page - 1) * perPage + images.length; 
 
+        
         if (totalLoaded >= totalHits) {
             loadMoreButton.style.display = 'none';
             showEndOfResultsMessage(); 
@@ -70,6 +77,7 @@ async function loadImages() {
 
         loader.style.display = 'none'; 
 
+        
         if (cardHeight > 0) {
             window.scrollBy({
                 top: 2 * cardHeight, 
