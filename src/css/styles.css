@@ -196,3 +196,7 @@ button:focus {
 #load-more {
   margin-top: 32px; 
 }
+
+#loader {
+  display: none; 
+}

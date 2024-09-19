@@ -15,6 +15,22 @@ const galleryList = document.getElementById('gallery');
 const loadMoreButton = document.getElementById('load-more');
 const loader = document.getElementById('loader');
 
+searchForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+  
+    const searchInput = document.getElementById('search-input').value.trim();
+  
+    if (!searchInput) {
+        iziToast.error({ message: 'Please enter a search word.' });
+        return;
+    }
+
+    currentQuery = searchInput;
+    page = 1;
+    clearGallery(galleryList);
+    loadImages(); 
+});
+
 async function loadImages() {
     loader.style.display = 'block'; 
     loadMoreButton.style.display = 'none'; 
@@ -66,6 +82,6 @@ async function loadImages() {
             position: 'topRight',
             timeout: 5000,
         });
-        loader.style.display = 'none';
+        loader.style.display = 'none'; 
     }
 }
