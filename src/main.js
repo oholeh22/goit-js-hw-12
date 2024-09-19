@@ -13,7 +13,7 @@ const perPage = 15;
 const searchForm = document.getElementById('search-form');
 const galleryList = document.getElementById('gallery');
 const loadMoreButton = document.getElementById('load-more');
-const loader = document.getElementById('loader');
+const loader = document.querySelector('.loader'); 
 
 searchForm.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -31,8 +31,12 @@ searchForm.addEventListener('submit', function(event) {
     loadImages(); 
 });
 
+window.addEventListener('DOMContentLoaded', () => {
+    loader.style.display = 'none'; 
+});
+
 async function loadImages() {
-    loader.style.display = 'block'; 
+    loader.style.display = 'inline-block'; 
     loadMoreButton.style.display = 'none'; 
 
     try {
